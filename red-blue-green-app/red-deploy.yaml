@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: red-app
+  name: red-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: red-app
+  template:
+    metadata:
+      labels:
+        app: red-app
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: busybox
+        image: busybox
+        command: ["/bin/sh", "-c", 'echo "<body style="background-color:RED"><center><h1><font color=YELLOW>Welcome to RED Website of talant</font></h1></center></body>" > /webdata/index.html']
+        volumeMounts:
+        - name: webdata
+          mountPath: /webdata
+      containers:
+      - image: php:7.2-apache
+        name: php7-2-apache-46p8l
+        volumeMounts:
+        - name: webdata
+          mountPath: /var/www/html
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: red-app
+    name: red-app
+  spec:
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: red-app

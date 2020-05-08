@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: blue-app
+  name: blue-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blue-app
+  template:
+    metadata:
+      labels:
+        app: blue-app
+    spec:
+      volumes:
+      - name: webdata
+        emptyDir: {}
+      initContainers:
+      - name: busybox
+        image: busybox
+        command: ["/bin/sh", "-c", 'echo "<body style="background-color:BLUE"><center><h1><font color=YELLOW>This is Talant BLUE Website</font></h1></center></body>" > /webdata/index.html']
+        volumeMounts:
+        - name: webdata
+          mountPath: /webdata
+      containers:
+      - image: php:7.2-apache
+        name: php7-2-apache-46p8l
+        volumeMounts:
+        - name: webdata
+          mountPath: /var/www/html
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: blue-app
+    name: blue-app
+  spec:
+    ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+    selector:
+      app: blue-app

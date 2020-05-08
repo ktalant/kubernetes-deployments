@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: rgb-app-ingress
+spec:
+  rules:
+  - host: red.talantzon.com
+    http:
+      paths:
+      - backend:
+          serviceName: red-app
+          servicePort: 80
+  - host: green.talantzon.com
+    http:
+      paths:
+      - backend:
+          serviceName: green-app
+          servicePort: 80
+  - host: blue.talantzon.com
+    http:
+      paths:
+      - backend:
+          serviceName: blue-app
+          servicePort: 80
+    
